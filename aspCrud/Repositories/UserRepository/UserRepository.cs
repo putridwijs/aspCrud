@@ -13,9 +13,15 @@ public class UserRepository : IUserRepository
     }
     
     // Get All Users
-    public async Task<List<UserDAO>> GetUsers()
+    public async Task<GetAllResponseDTO<UserDAO>> GetUsers(int pageSize, int skipAmount)
     {
-        return await _bedbContext.Users.ToListAsync();
+        var result = await _bedbContext.Users.Skip(skipAmount).Take(pageSize).ToListAsync();
+        var totalData = await _bedbContext.Users.CountAsync();
+        return new GetAllResponseDTO<UserDAO>()
+        {
+            Result = result,
+            Count = totalData
+        };
     }
     
     // Get User By Id
@@ -55,5 +61,14 @@ public class UserRepository : IUserRepository
         _bedbContext.Users.Remove(user);
         var result = await _bedbContext.SaveChangesAsync() == 1;
         return result;
+    }
+    
+    // Get User By Email
+    public async Task<UserDAO?> GetUserByEmail(string email)
+    {
+        var user = await _bedbContext.Users.Where(x=> x.Email == email).FirstOrDefaultAsync();
+        if (user == null)
+            return null;
+        return user;
     }
 }

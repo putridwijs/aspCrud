@@ -1,5 +1,4 @@
-﻿using aspCrud.Models.DAO;
-using aspCrud.Models.DTO;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace aspCrud.Controllers
@@ -31,14 +30,14 @@ namespace aspCrud.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<ActionResult<RoleResponseDTO>> AddRole(RoleDTO role)
         {
             // var result = await _roleService.AddRole(role);
             return Ok(await _roleService.AddRole(role));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize]
         public async Task<ActionResult<RoleResponseDTO>> EditRole(Guid id, RoleDTO request)
         {
             var response = await _roleService.EditRole(id, request);
@@ -47,7 +46,7 @@ namespace aspCrud.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<ActionResult<bool>> DeleteRole(Guid id)
         {
             var response = await _roleService.DeleteRole(id);

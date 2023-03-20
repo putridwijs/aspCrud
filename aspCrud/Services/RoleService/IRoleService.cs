@@ -1,7 +1,4 @@
-﻿using aspCrud.Models.DAO;
-using aspCrud.Models.DTO;
-
-namespace aspCrud.Services.RoleService
+﻿namespace aspCrud.Services.RoleService
 {
     public interface IRoleService
     {

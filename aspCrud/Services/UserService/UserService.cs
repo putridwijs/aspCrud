@@ -1,6 +1,4 @@
 ﻿using aspCrud.Models.DAO;
-using aspCrud.Models.DTO;
-using aspCrud.Repositories.UserRepository;
 using AutoMapper;
 
 namespace aspCrud.Services.UserService;
@@ -19,11 +17,23 @@ public class UserService : IUserService
     }
     
     // Get All Users
-    public async Task<List<UserResponseDTO>> GetUsers()
+    public async Task<ResponsePaginationDTO<UserResponseDTO>> GetUsers(int? page, int? pageSize)
     {
-        var users = await _userRepository.GetUsers();
-        var response = _mapper.Map<List<UserResponseDTO>>(users);
-        return response;
+        var skipAmount = pageSize * (page - 1);
+        var users = await _userRepository.GetUsers(pageSize ?? 10, skipAmount ?? 1);
+        var response = _mapper.Map<List<UserResponseDTO>>(users.Result);
+        
+        var mod = users.Count % pageSize;
+        var totalPage = (users.Count / pageSize) + (mod == 0 ? 0 : 1);
+
+        return new ResponsePaginationDTO<UserResponseDTO>()
+        {
+            PageSize = pageSize,
+            PageNumber = page,
+            Results = response,
+            TotalNumberOfPages = totalPage,
+            TotalNumberOfRecords = users.Count
+        };
     }
     
     // Get User By Id
@@ -65,5 +75,24 @@ public class UserService : IUserService
     public async Task<bool> DeleteUser(Guid id)
     {
         return await _userRepository.DeleteUser(id);
+    }
+    
+    // Get User By Email
+    public async Task<UserResponseDTO?> GetUserByEmail(string email)
+    {
+        var user = await _userRepository.GetUserByEmail(email);
+        if (user == null)
+            return null;
+        var response = _mapper.Map<UserResponseDTO>(user);
+        return response;
+    }
+    
+    // Check Existing User by Email
+    public async Task<bool> CheckExistingUserByEmail(string email)
+    {
+        var user = await _userRepository.GetUserByEmail(email);
+        if (user == null)
+            return false;
+        return true;
     }
 }

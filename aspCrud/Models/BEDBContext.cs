@@ -11,13 +11,6 @@ namespace aspCrud.Models
             
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(
-                "Server=.\\SQLExpress;Database=aspcrud;Trusted_Connection=true;TrustServerCertificate=true");
-        }
-
         public DbSet<RoleDAO> Roles { get; set; }
         public DbSet<UserDAO> Users { get; set; }
 

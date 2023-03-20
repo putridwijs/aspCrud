@@ -1,5 +1,4 @@
-﻿using aspCrud.Models;
-using aspCrud.Models.DAO;
+﻿using aspCrud.Models.DAO;
 using Microsoft.EntityFrameworkCore;
 
 namespace aspCrud.Repositories.RoleRepository

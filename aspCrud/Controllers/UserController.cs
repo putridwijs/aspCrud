@@ -1,4 +1,4 @@
-﻿using aspCrud.Models.DTO;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace aspCrud.Controllers;
@@ -16,9 +16,9 @@ public class UserController : ControllerBase
     
     // GET All Users
     [HttpGet]
-    public async Task<ActionResult<List<UserResponseDTO>>> GetUsers()
+    public async Task<ActionResult<ResponsePaginationDTO<UserResponseDTO>>> GetUsers([FromQuery(Name = "page")] int? page = 1, [FromQuery(Name = "pageSize")] int? pageSize = 10)
     {
-        return Ok(await _userService.GetUsers());
+        return Ok(await _userService.GetUsers(page, pageSize));
     }
     
     // GET User By Id
@@ -32,7 +32,7 @@ public class UserController : ControllerBase
     }
     
     // POST Add User
-    [HttpPost]
+    [HttpPost, Authorize]
     public async Task<ActionResult<UserResponseDTO>> AddUser(UserDTO request)
     {
         var response = await _userService.AddUser(request);
@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     }
     
     // PUT Edit User
-    [HttpPut]
+    [HttpPut, Authorize]
     public async Task<ActionResult<UserResponseDTO>> UpdateUser(Guid id, UserDTO request)
     {
         var response = await _userService.UpdateUser(id, request);
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     }
     
     // DELETE User
-    [HttpDelete]
+    [HttpDelete, Authorize]
     public async Task<ActionResult<bool>> DeleteUser(Guid id)
     {
         var response = await _userService.DeleteUser(id);
